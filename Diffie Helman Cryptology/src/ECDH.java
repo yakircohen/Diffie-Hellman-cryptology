@@ -1,4 +1,4 @@
- import java.security.KeyPairGenerator;
+                          import java.security.KeyPairGenerator;
  import java.security.spec.ECGenParameterSpec; /**
  * File: ECHD.java
  *
@@ -10,7 +10,7 @@
  */
  public class ECDH {
 
- public static void main(String[] args) throws Exception {
+ public static void main(String[] args) throws Exception {       
 
  // The first step in using ECDH in Java is to create a
  // KeyPairGenerator. This lets us make private keys and
