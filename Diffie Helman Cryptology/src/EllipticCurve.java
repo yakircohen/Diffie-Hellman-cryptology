@@ -35,7 +35,7 @@ public class EllipticCurve {
         	tempA = (curveParams[0].pow(3)).multiply(BigInteger.valueOf(4));//tempA = 4*a^3
         	tempB = (curveParams[1].pow(2)).multiply(BigInteger.valueOf(27));//tempB = 27*b^2
         	checkSingularity = tempA.add(tempB);
-        	
+        	dsada
     	}while(checkSingularity.mod(curveParams[2]) == BigInteger.ZERO);
     	
     	return curveParams;
