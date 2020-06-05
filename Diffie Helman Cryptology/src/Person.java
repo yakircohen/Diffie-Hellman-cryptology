@@ -16,7 +16,7 @@ public class Person {
 	public Person(BigInteger p){ 
 		int y = BigIntegerMath.log2(p,RoundingMode.FLOOR);
 		this.privateKey= new BigInteger(y, new Random()); 
-		System.out.println(this.privateKey);//kjvfdmnbvjkdnvjbkid
+		System.out.println(this.privateKey);//kjvfdmnbvjkdnvj
 		 
 	}
 	
