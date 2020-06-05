@@ -11,9 +11,9 @@ public class EllipticCurve {
 		initCurve();
 	}
        
-    public BigInteger[] initCurve()
+    public void initCurve()
     {
-    	BigInteger[] curveParams = new BigInteger[3];//curveParams[0] = a, curveParams[1] = b, curveParams[2] = p
+   
     	Random randGen = new Random();
     	BigInteger two = new BigInteger("2");
     	BigInteger min = two.pow(255);
@@ -23,22 +23,21 @@ public class EllipticCurve {
     	do {
     		BigInteger randNum = new BigInteger(max.bitLength(), randGen);
         	if(randNum.compareTo(min) < 0)
-        		curveParams[2] = randNum.add(min);
+        		p = randNum.add(min);
         	if(randNum.compareTo(subtraction) >= 0)
-        		curveParams[2] = randNum.mod(subtraction).add(min);
-
-    	}while(curveParams[2].isProbablePrime(1) == false);
+        		p = randNum.mod(subtraction).add(min);
+ 
+    	}while(p.isProbablePrime(1) == false);
 
     	do {
-    		curveParams[1] = new BigInteger(max.bitLength(), randGen);
-    		curveParams[0] = new BigInteger(max.bitLength(), randGen);
-        	tempA = (curveParams[0].pow(3)).multiply(BigInteger.valueOf(4));//tempA = 4*a^3
-        	tempB = (curveParams[1].pow(2)).multiply(BigInteger.valueOf(27));//tempB = 27*b^2
+    		b = new BigInteger(max.bitLength(), randGen);
+    		a = new BigInteger(max.bitLength(), randGen);
+        	tempA = (a.pow(3)).multiply(BigInteger.valueOf(4));//tempA = 4*a^3
+        	tempB = (b.pow(2)).multiply(BigInteger.valueOf(27));//tempB = 27*b^2
         	checkSingularity = tempA.add(tempB);
         	
-    	}while(checkSingularity.mod(curveParams[2]) == BigInteger.ZERO);
-    	
-    	return curveParams;
+    	}while(checkSingularity.mod(p) == BigInteger.ZERO);
+    	System.out.println(p);
     }
     	
     public BigInteger[] findGenerator(BigInteger a,BigInteger b, BigInteger p)

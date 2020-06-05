@@ -1,5 +1,6 @@
 
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Random;
 import com.google.common.math.BigIntegerMath;
 
@@ -11,10 +12,11 @@ public class Person {
 	private BigInteger pubKeyX;
 	private BigInteger pubKeyY;
 	
-	public Person(BigInteger p){                                                                                  
-		BigInteger y = BigInteger.valueOf((long)(Math.log(p.longValue()) / Math.log(2)));
-		int x=y.intValue();
-		this.privateKey= new BigInteger(x-1, new Random()); 
+
+	public Person(BigInteger p){ 
+		int y = BigIntegerMath.log2(p,RoundingMode.FLOOR);
+		this.privateKey= new BigInteger(y, new Random()); 
+		System.out.println(this.privateKey);
 		 
 	}
 	
@@ -31,7 +33,7 @@ public class Person {
 	}
 	public void setPubKeyY(BigInteger pubKeyY) {
 		this.pubKeyY = pubKeyY;
-	}
+	} 
 
 }
                                                         
