@@ -1,7 +1,7 @@
 
 import java.math.BigInteger;
 import java.util.Random;
-
+import com.google.common.math.*;
 
 
 
@@ -15,7 +15,7 @@ public class Person {
 		BigInteger y = BigInteger.valueOf((long)(Math.log(p.longValue()) / Math.log(2)));
 		int x=y.intValue();
 		this.privateKey= new BigInteger(x-1, new Random()); 
-		System.out.println(this.privateKey);   
+		  
 	}
 	
 	
