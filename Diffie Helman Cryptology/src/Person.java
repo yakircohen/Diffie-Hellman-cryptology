@@ -13,13 +13,21 @@ public class Person {
 	private BigInteger pubKeyY;
 	
 
-	public Person(BigInteger p){ 
-		int y = BigIntegerMath.log2(p,RoundingMode.FLOOR);
-		this.privateKey= new BigInteger(y, new Random()); 
-		System.out.println(this.privateKey);//kjvfdmnbvjkdnvj
-		 
+	public Person(BigInteger p,BigInteger[] generator){ 
+		Random randPrivKey = new Random();
+		do {
+			this.privateKey= new BigInteger(p.bitLength(), randPrivKey); 
+		}while(p.compareTo(privateKey) <= 0);
+		findPubKey(this.privateKey,generator);
 	}
 	
+	public BigInteger[] findPubKey(BigInteger privateKey,BigInteger[] generator)
+	{
+		BigInteger[] pubKey = new BigInteger[2];
+		
+		
+		return pubKey;
+	}
 	
 	
 	public BigInteger getPubKeyX() {

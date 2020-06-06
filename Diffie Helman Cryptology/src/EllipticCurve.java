@@ -1,14 +1,20 @@
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Random;
+
+import com.google.common.math.BigIntegerMath;
 
 
 public class EllipticCurve {
        private BigInteger a;
        private BigInteger b;
        private BigInteger p;
+
        
        public EllipticCurve() {
 		initCurve();
+		
 	}
        
     public void initCurve()
@@ -37,20 +43,32 @@ public class EllipticCurve {
         	checkSingularity = tempA.add(tempB);
         	
     	}while(checkSingularity.mod(p) == BigInteger.ZERO);
-    	System.out.println(p);
     }
     	
     public BigInteger[] findGenerator(BigInteger a,BigInteger b, BigInteger p)
     {
     	BigInteger coordinateY, tempXPow,tempA,afterMod;
     	BigInteger[] generator = new BigInteger[2];//generator[0] = coordinateX , generator[1] = coordinateY
-    	for(BigInteger i = BigInteger.ZERO; i.compareTo(p) <0;i.add(BigInteger.valueOf(1)))
+    	for(BigInteger i = BigInteger.ZERO; i.compareTo(p) <0;i = i.add(BigInteger.valueOf(1)))
     	{
     		tempXPow = i.pow(3); //x^3
     		tempA = a.multiply(i); //a*x
     		coordinateY = tempXPow.add(tempA.add(b));//x^3 + a*x + b
+    		BigInteger sqrtRes[] = coordinateY.sqrtAndRemainder();
+    		if(sqrtRes[1].compareTo(BigInteger.ZERO) == 0)
+    		{
+    			generator[0] = i;//generator[0] = x
+    			generator[1] = sqrtRes[0];//generator[1] = y;
+    			break;
+    		}
     		afterMod = coordinateY.mod(p);
-    		afterMod = afterMod.sqrt();
+    		sqrtRes = afterMod.sqrtAndRemainder();
+    		if(sqrtRes[1].compareTo(BigInteger.ZERO) == 0)
+    		{
+    			generator[0] = i;//generator[0] = x
+    			generator[1] = sqrtRes[0];//generator[1] = y;
+    			break;
+    		}
     	}
     	return generator;
     }
@@ -78,9 +96,6 @@ public class EllipticCurve {
 	public void setP(BigInteger p) {
 		this.p = p;
 	}
-     
-       
-       
-       
+
        
 }
