@@ -1,14 +1,18 @@
 import java.math.BigInteger;
-import java.math.BigDecimal;
+
 
 public class MainClass {
 
 	public static void main(String[] args) {
+		BigInteger five = new BigInteger("10");
+		BigInteger[] res = five.divideAndRemainder(new BigInteger("8"));
+		System.out.println(res[0] + " " + res[1]);
+		
 		 
 		EllipticCurve el = new EllipticCurve();
 		BigInteger[] generator = el.findGenerator(el.getA(), el.getB(), el.getP());
 		Person alice = new Person(el.getP(),generator,el.getA());
-
+			
 	}
 
 }
