@@ -21,7 +21,7 @@ public class Person {
 		Random randPrivKey = new Random();
 		do {
 			this.privateKey= new BigInteger(p.bitLength(), randPrivKey); 
-		}while(p.compareTo(privateKey) <= 0);
+		}while(p.compareTo(privateKey) <= 0 || privateKey.compareTo(BigInteger.ONE) < 1);
 		
 		BigInteger[] pubKey = new BigInteger[2];
 		pubKey=findPubKey(this.privateKey,generator,this.a,this.p);
@@ -40,7 +40,7 @@ public class Person {
 		
 		for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
 		{
-			System.out.println(i);
+			
 			if(generator[0].compareTo(pubKey[0]) != 0)
 			{
 				numerator=generator[1].subtract(pubKey[1]);//y2-y1
@@ -58,7 +58,7 @@ public class Person {
 				denom=pubKey[1].multiply(BigInteger.valueOf(2));//2*y1
 	
 			}
-			inverse=denom.modInverse(p);///////// 
+			inverse=denom.modInverse(p);
 			m=numerator.multiply(inverse);
 			x3=m.pow(2);//m^2
 			x3=(x3.subtract(pubKey[0])).subtract(generator[0]);//x3 = m^2 - x1 - x2 
