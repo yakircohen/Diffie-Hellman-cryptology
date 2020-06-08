@@ -40,7 +40,7 @@ public class Person {
 		
 		for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
 		{
-			
+			System.out.println(i);
 			if(generator[0].compareTo(pubKey[0]) != 0)
 			{
 				numerator=generator[1].subtract(pubKey[1]);//y2-y1
@@ -58,7 +58,7 @@ public class Person {
 				denom=pubKey[1].multiply(BigInteger.valueOf(2));//2*y1
 	
 			}
-			inverse= getInverse(denom,p); 
+			inverse=denom.modInverse(p);///////// 
 			m=numerator.multiply(inverse);
 			x3=m.pow(2);//m^2
 			x3=(x3.subtract(pubKey[0])).subtract(generator[0]);//x3 = m^2 - x1 - x2 
@@ -73,15 +73,7 @@ public class Person {
 		
 		return pubKey;
 	}
-	static BigInteger getInverse(BigInteger a,BigInteger  p) 
-    { 
-        a = a.mod(p); 
-        
-        for (BigInteger x = BigInteger.ONE; x.compareTo(p) < 0; x = x.add(BigInteger.valueOf(1))) 
-           if (a.multiply(x).mod(p).compareTo(BigInteger.ONE)== 0) 
-              return x; 
-        return BigInteger.ONE; 
-    } 
+	
 	
 	public BigInteger getPubKeyX() {
 		return pubKeyX;

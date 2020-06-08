@@ -22,8 +22,8 @@ public class EllipticCurve {
    
     	Random randGen = new Random();
     	BigInteger two = new BigInteger("2");
-    	BigInteger min = two.pow(2);
-    	BigInteger max = two.pow(3);
+    	BigInteger min = two.pow(40);
+    	BigInteger max = two.pow(41);
     	BigInteger subtraction = max.subtract(min);
     	BigInteger checkSingularity,tempA,tempB;
     	do {
@@ -51,7 +51,7 @@ public class EllipticCurve {
     	BigInteger[] generator = new BigInteger[2];//generator[0] = coordinateX , generator[1] = coordinateY
     	for(BigInteger i = BigInteger.ZERO; i.compareTo(p) <0;i = i.add(BigInteger.valueOf(1)))
     	{
-    		
+    		System.out.println(i); 
     		tempXPow = i.pow(3); //x^3
     		tempA = a.multiply(i); //a*x
     		coordinateY = tempXPow.add(tempA.add(b));//x^3 + a*x + b
