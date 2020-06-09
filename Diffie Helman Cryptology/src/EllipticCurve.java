@@ -1,4 +1,4 @@
-import java.math.BigDecimal;
+
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Random;
@@ -19,11 +19,11 @@ public class EllipticCurve {
        
     public void initCurve()
     {
-   
+      
     	Random randGen = new Random();
     	BigInteger two = new BigInteger("2");
-    	BigInteger min = two.pow(1);
-    	BigInteger max = two.pow(2);
+    	BigInteger min = two.pow(8);
+    	BigInteger max = two.pow(9);
     	BigInteger subtraction = max.subtract(min);
     	BigInteger checkSingularity,tempA,tempB;
     	do {
@@ -71,6 +71,8 @@ public class EllipticCurve {
     			break;
     		}
     	}
+    
+    		
     	return generator;
     }
 

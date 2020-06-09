@@ -13,23 +13,24 @@ public class Person {
 	private BigInteger pubKeyY;
 	private BigInteger a;
 	private BigInteger p;
+	private BigInteger b;
 
-	public Person(BigInteger p,BigInteger[] generator,BigInteger a){ 
+	public Person(BigInteger p,BigInteger[] generator,BigInteger a,BigInteger b){ 
 		this.a = a;
 		this.p = p;
-		
+		this.b = b;
 		Random randPrivKey = new Random();
 		do {
 			this.privateKey= new BigInteger(p.bitLength(), randPrivKey); 
 		}while(p.compareTo(privateKey) <= 0 || privateKey.compareTo(BigInteger.ONE) < 1);
 		
 		BigInteger[] pubKey = new BigInteger[2];
-		pubKey=findPubKey(this.privateKey,generator,this.a,this.p);
+		pubKey=findPubKey(this.privateKey,generator,this.a,this.p,this.b);
 		System.out.println(pubKey[0]);
 		System.out.println(pubKey[1]);
 	}
 	
-	public BigInteger[] findPubKey(BigInteger privateKey,BigInteger[] generator,BigInteger a,BigInteger p)
+	public BigInteger[] findPubKey(BigInteger privateKey,BigInteger[] generator,BigInteger a,BigInteger p,BigInteger b)
 	{
 		BigInteger m,numerator = null,denom = null,inverse = null,x3,y3;
 		

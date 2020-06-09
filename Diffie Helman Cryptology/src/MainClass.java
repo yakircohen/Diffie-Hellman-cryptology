@@ -4,12 +4,17 @@ import java.math.BigInteger;
 public class MainClass {
 
 	public static void main(String[] args) {
-		BigInteger five = new BigInteger("10");
-		BigInteger[] res = five.divideAndRemainder(new BigInteger("8"));
-		 
+
+		
 		EllipticCurve el = new EllipticCurve();
 		BigInteger[] generator = el.findGenerator(el.getA(), el.getB(), el.getP());
-		Person alice = new Person(el.getP(),generator,el.getA());
+		while(generator[0]==null||generator[1]==null)
+		{
+			el.initCurve();
+			generator = el.findGenerator(el.getA(), el.getB(), el.getP());
+		}
+		
+		Person alice = new Person(el.getP(),generator,el.getA(),el.getB());
 			
 	}
 
