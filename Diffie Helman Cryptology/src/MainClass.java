@@ -14,6 +14,7 @@ public class MainClass {
 			generator = el.findGenerator(el.getA(), el.getB(), el.getP());
 		}
 		
+		System.out.println("generator:["+generator[0]+","+generator[1]+"]");
 		Person alice = new Person(el.getP(),generator,el.getA(),el.getB());
 			
 	}

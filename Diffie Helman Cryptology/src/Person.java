@@ -23,11 +23,10 @@ public class Person {
 		do {
 			this.privateKey= new BigInteger(p.bitLength(), randPrivKey); 
 		}while(p.compareTo(privateKey) <= 0 || privateKey.compareTo(BigInteger.ONE) < 1);
-		
 		BigInteger[] pubKey = new BigInteger[2];
 		pubKey=findPubKey(this.privateKey,generator,this.a,this.p,this.b);
-		System.out.println(pubKey[0]);
-		System.out.println(pubKey[1]);
+		System.out.println("pubkeyX: "+pubKey[0]);
+		System.out.println("pubkeyY: "+pubKey[1]);
 	}
 	
 	public BigInteger[] findPubKey(BigInteger privateKey,BigInteger[] generator,BigInteger a,BigInteger p,BigInteger b)
@@ -37,7 +36,7 @@ public class Person {
 		BigInteger[] pubKey = new BigInteger[2];
 		pubKey[0]=generator[0];//x1
 		pubKey[1]=generator[1];//y1
-
+		System.out.println("privateKey: "+privateKey);
 		
 		for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
 		{

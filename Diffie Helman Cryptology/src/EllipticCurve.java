@@ -22,8 +22,8 @@ public class EllipticCurve {
       
     	Random randGen = new Random();
     	BigInteger two = new BigInteger("2");
-    	BigInteger min = two.pow(8);
-    	BigInteger max = two.pow(9);
+    	BigInteger min = two.pow(20);
+    	BigInteger max = two.pow(21);
     	BigInteger subtraction = max.subtract(min);
     	BigInteger checkSingularity,tempA,tempB;
     	do {
@@ -42,7 +42,7 @@ public class EllipticCurve {
         	tempB = (b.pow(2)).multiply(BigInteger.valueOf(27));//tempB = 27*b^2
         	checkSingularity = tempA.add(tempB);
         	
-    	}while(checkSingularity.mod(p) == BigInteger.ZERO || a.compareTo(BigInteger.ZERO) <= 0 || b.compareTo(BigInteger.ZERO) <=0 );
+    	}while(checkSingularity.mod(p) == BigInteger.ZERO );
     }
     	
     public BigInteger[] findGenerator(BigInteger a,BigInteger b, BigInteger p)
@@ -56,7 +56,7 @@ public class EllipticCurve {
     		tempA = a.multiply(i); //a*x
     		coordinateY = tempXPow.add(tempA.add(b));//x^3 + a*x + b
     		BigInteger sqrtRes[] = coordinateY.sqrtAndRemainder();
-    		if(sqrtRes[1].compareTo(BigInteger.ZERO) == 0 && sqrtRes[0].compareTo(BigInteger.ZERO)!=0)
+    		if(sqrtRes[1].compareTo(BigInteger.ZERO) == 0 && sqrtRes[0].compareTo(BigInteger.ZERO)!=0)//////
     		{
     			generator[0] = i;//generator[0] = x
     			generator[1] = sqrtRes[0];//generator[1] = y;
@@ -64,7 +64,7 @@ public class EllipticCurve {
     		}
     		afterMod = coordinateY.mod(p);
     		sqrtRes = afterMod.sqrtAndRemainder();
-    		if(sqrtRes[1].compareTo(BigInteger.ZERO) == 0 && sqrtRes[0].compareTo(BigInteger.ZERO)!=0)
+    		if(sqrtRes[1].compareTo(BigInteger.ZERO) == 0 && sqrtRes[0].compareTo(BigInteger.ZERO)!=0)////////
     		{
     			generator[0] = i;//generator[0] = x
     			generator[1] = sqrtRes[0];//generator[1] = y;
