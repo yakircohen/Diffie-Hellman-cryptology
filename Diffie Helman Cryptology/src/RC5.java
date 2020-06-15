@@ -10,7 +10,6 @@ public class RC5 {
 		//converting secret key from byte to words 
 		int u = P.bitLength()/8;//u = w/8 (w is the bits we chose for P and Q - 16 in our case)
 		int c = (key.bitCount()/8)/u; // c=b/u (b is the size of the key in bytes)
-		System.out.println();
 		return res;
 	}
 
