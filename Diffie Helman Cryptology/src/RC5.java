@@ -1,5 +1,5 @@
 import java.math.BigInteger;
-
+import java.math.*;
 public class RC5 {
 	
 	 public static void main(String[] args)
@@ -15,7 +15,7 @@ public class RC5 {
 		 
 		BigInteger binarykey;
 		BigInteger two = new BigInteger("2");
-    	BigInteger key = two.pow(56);
+    	BigInteger key = two.pow(55);
     	System.out.println(key.bitLength());
 		ke=key.toString(2);//change to base 2
 		length = ke.length();// the  key's length in binary
@@ -44,8 +44,8 @@ public class RC5 {
 		   i++;
 		}
 		
-		for(i=length/8-1;i>0;i--)
-			L[i/u] = (L[u/i].shiftLeft(8)).add(K[i]);
+		for(i=(int)Math.ceil(length/8.0)-1;i>0;i--)//array starts from 0
+			L[i/u] = (L[i/u].shiftLeft(8)).add(K[i]);
 		
 		S[0]=P;
 		for(i=1;i<t;i++)
@@ -62,16 +62,19 @@ public class RC5 {
 				B = L[j] = (((L[j].add(A)).add(B)).shiftLeft(temp.intValue()));
 				i = (i + 1) % t;
 				j = (j + 1) % c;
+				
 			}
 			else
 				for(int x=0;x<3*c;x++)
 				{
 					A = S[i] = (((S[i].add(A)).add(B)).shiftLeft(3));
-					B = L[j] = ((L[j].add(A)).add(B)).shiftLeft(3);
+					temp = L[j].add(A).add(B);
+					B = L[j] = ((L[j].add(A)).add(B)).shiftLeft(A.add(B).intValue());
 					i = (i + 1) % t;
 					j = (j + 1) % c;
+					
 				} 
-				
+	
 		System.out.print("k= ");
 		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(length/8))<0; m = m.add(BigInteger.valueOf(1)))
 			System.out.print(K[m.intValue()]+" ");
@@ -84,5 +87,11 @@ public class RC5 {
 	//	System.out.println(A);
 		//System.out.println(B);
 	}
-
+		private static BigInteger rotateLeft(BigInteger temp,int mylen,BigInteger myrot) {
+		    BigInteger ret = temp.shiftLeft(1);
+		    if (ret.testBit(32)) {
+		        ret = ret.clearBit(32).setBit(0);
+		    }
+		    return ret;
+		}
 }
