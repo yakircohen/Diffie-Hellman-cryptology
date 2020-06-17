@@ -22,8 +22,8 @@ public class EllipticCurve {
       
     	Random randGen = new Random();
     	BigInteger two = new BigInteger("2");
-    	BigInteger min = two.pow(55);
-    	BigInteger max = two.pow(56);
+    	BigInteger min = two.pow(14);
+    	BigInteger max = two.pow(15);
     	BigInteger subtraction = max.subtract(min);
     	BigInteger checkSingularity,tempA,tempB;
     	do {

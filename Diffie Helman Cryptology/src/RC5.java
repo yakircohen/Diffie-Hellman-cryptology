@@ -7,14 +7,16 @@ public class RC5 {
 		String ke;
 		int length;
 		int i=0;
+		int j=0;
 		int r=12;
 		int t=2*(r+1);
+		BigInteger A, B;
 		BigInteger eight = BigInteger.valueOf(100000000);
 		 
 		BigInteger binarykey;
-		BigInteger two = new BigInteger("3");
+		BigInteger two = new BigInteger("2");
     	BigInteger key = two.pow(56);
-    	
+    	System.out.println(key.bitLength());
 		ke=key.toString(2);//change to base 2
 		length = ke.length();// the  key's length in binary
 		binarykey = new BigInteger(ke);//change string to biginteger
@@ -25,33 +27,62 @@ public class RC5 {
 		int u = P.bitLength()/8;//u = w/8 (w is the bits we chose for P and Q - 16 in our case)
 		int c = (length/8)/u; // c=b/u (b is the size of the key in bytes)
 		
-		BigInteger [] s = new BigInteger[t];//
-		BigInteger [] k = new BigInteger[length/8+1];
-		BigInteger [] l = new BigInteger[c];
+		BigInteger [] S = new BigInteger[t];
+		BigInteger [] K = new BigInteger[length/8+1];
+		BigInteger [] L = new BigInteger[c+1];///////
 		
-		for(i=0;i<c;i++)
-			l[i]=BigInteger.ZERO;
+		for(i=0;i<c+1;i++)
+			L[i]=BigInteger.ZERO;
 		i=0;
 		
 		System.out.println("Number = " +binarykey);
 		
 		while (!binarykey.equals(BigInteger.ZERO))
 		{
-		   k[i]=binarykey.mod(eight);
+		   K[i]=binarykey.mod(eight);
 		   binarykey = binarykey.divide(eight);
 		   i++;
 		}
 		
-		for(i=length/8-2;i>0;i--)
-			l[i/u] = (l[u/i].shiftLeft(8)).add(k[i]);
+		for(i=length/8-1;i>0;i--)
+			L[i/u] = (L[u/i].shiftLeft(8)).add(K[i]);
 		
+		S[0]=P;
+		for(i=1;i<t;i++)
+			S[i]=S[i-1].add(Q);
 		
-		System.out.println("k= ");
-		for(BigInteger j = BigInteger.ZERO; j.compareTo(BigInteger.valueOf(length/8+1))<0; j = j.add(BigInteger.valueOf(1)))
-		System.out.println(k[j.intValue()]);
-		System.out.println("\nl= ");
-		for(BigInteger j = BigInteger.ZERO; j.compareTo(BigInteger.valueOf(c))<0; j = j.add(BigInteger.valueOf(1)))
-			System.out.println(l[j.intValue()]+"  ");
+		i=j=0;
+		A = B = BigInteger.ZERO;
+		BigInteger temp=new BigInteger("0");
+		if(t>c)
+			for(int x=0;x<3*t;x++)
+			{
+				A = S[i] = (((S[i].add(A)).add(B)).shiftLeft(3));
+				temp = A.add(B);
+				B = L[j] = (((L[j].add(A)).add(B)).shiftLeft(temp.intValue()));
+				i = (i + 1) % t;
+				j = (j + 1) % c;
+			}
+			else
+				for(int x=0;x<3*c;x++)
+				{
+					A = S[i] = (((S[i].add(A)).add(B)).shiftLeft(3));
+					B = L[j] = ((L[j].add(A)).add(B)).shiftLeft(3);
+					i = (i + 1) % t;
+					j = (j + 1) % c;
+				} 
+				
+		System.out.print("k= ");
+		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(length/8))<0; m = m.add(BigInteger.valueOf(1)))
+			System.out.print(K[m.intValue()]+" ");
+		System.out.print("\nl= ");
+		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(c+1))<0; m = m.add(BigInteger.valueOf(1)))
+			System.out.print(L[m.intValue()]+" ");
+		System.out.print("\ns= ");
+		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(t))<0; m = m.add(BigInteger.valueOf(1)))
+			System.out.print(S[m.intValue()]+" ");
+	//	System.out.println(A);
+		//System.out.println(B);
 	}
 
 }
