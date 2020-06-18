@@ -32,6 +32,7 @@ public class EllipticCurve {
         		p = randNum.add(min);
         	if(randNum.compareTo(subtraction) >= 0)
         		p = randNum.mod(subtraction).add(min);
+      //  	p=p.shiftRight(2).shiftLeft(2).add(BigInteger.TWO).add(BigInteger.ONE);
 
     	}while(p.isProbablePrime(1) == false);
 
@@ -51,7 +52,6 @@ public class EllipticCurve {
     	BigInteger[] generator = new BigInteger[2];//generator[0] = coordinateX , generator[1] = coordinateY
     	for(BigInteger i = BigInteger.ZERO; i.compareTo(p) <0;i = i.add(BigInteger.valueOf(1)))
     	{
-    		System.out.println(i);
     		tempXPow = i.pow(3); //x^3
     		tempA = a.multiply(i); //a*x
     		coordinateY = tempXPow.add(tempA.add(b));//x^3 + a*x + b
