@@ -30,7 +30,26 @@ public class RC5
 			}
 		    return ret;
 		}
-
+	 public static BigInteger rotateRight(BigInteger numToRotate,int mylen,BigInteger howManyToRotate)
+		{
+		//	System.out.println("temp= "+temp.toString()+", mylen="+mylen+", myrot="+myrot.toString());
+			BigInteger temprot;
+			BigInteger rotationlen=new BigInteger(Integer.toString(mylen));
+			temprot=howManyToRotate.mod(rotationlen);//Optimize rotation
+			BigInteger ret=numToRotate;
+			for(BigInteger i = BigInteger.ZERO; i.compareTo(temprot)<0; i = i.add(BigInteger.valueOf(1)))
+			    if (ret.testBit(0)) 
+			    {
+			    	ret= ret.shiftRight(1);
+			    	ret = ret.setBit(mylen-1);
+			    }
+			    else
+			    	ret= ret.shiftRight(1);
+			       
+			return ret;
+		}
+		    
+		
 	public void keyExp()
 	{
 		String ke;
@@ -90,8 +109,8 @@ public class RC5
 		for(int x=0;x<3*max;x++)
 		{
 
-			A = S[i] = rotateLeft((S[i].add(A).add(B)).mod(two.pow(P.bitLength())),16,three);
-			B = L[j] = rotateLeft((L[j].add(A).add(B)).mod(two.pow(P.bitLength())),16,A.add(B).mod(BigInteger.valueOf(2).pow(16))); 
+			A = S[i] = rotateLeft((S[i].add(A).add(B)).mod(two.pow(P.bitLength())),P.bitLength(),three);
+			B = L[j] = rotateLeft((L[j].add(A).add(B)).mod(two.pow(P.bitLength())),P.bitLength(),A.add(B).mod(BigInteger.valueOf(2).pow(16))); 
 			i = (i + 1) % t;
 			j = (j + 1) % c;	
 		}
@@ -114,10 +133,9 @@ public class RC5
 		BigInteger[] encText = new BigInteger[2];
 		BigInteger A, B;
 		A = plainText.shiftRight(P.bitLength());//left 16 bits
-		B = plainText.and(BigInteger.valueOf(65536));//right 16 bit
-		
-		A = A.add(S[0]);
-		B = B.add(S[1]);
+		B = plainText.and(BigInteger.valueOf(65536));//right 16 bits
+		A = A.add(S[0]).mod(BigInteger.TWO.pow(P.bitLength()));
+		B = B.add(S[1]).mod(BigInteger.TWO.pow(P.bitLength()));
 		for(int i = 0; i < r;i++)
 		{
 			A = (rotateLeft(A.xor(B), P.bitLength(), B).add(S[2*i])).mod(BigInteger.TWO.pow(P.bitLength()));
@@ -126,5 +144,25 @@ public class RC5
 		encText[0] = A;
 		encText[1] = B;
 		return encText;
+	}
+	public BigInteger[] dec(BigInteger encText)
+	{
+		BigInteger[] plainText = new BigInteger[2];
+		BigInteger A, B;
+		A = encText.shiftRight(P.bitLength());//left 16 bits
+		B = encText.and(BigInteger.valueOf(65536));//right 16 bit
+		for(int i = r; i > 0;i--)
+		{
+			B = rotateRight(B.subtract(S[2*i+1]),P.bitLength(), A).xor(A);	
+			A = rotateRight(A.subtract(S[2*i]),P.bitLength(), B).xor(B);
+			
+		}
+		B=B.subtract(S[1]).mod(BigInteger.TWO.pow(P.bitLength()));
+		A=A.subtract(S[0]).mod(BigInteger.TWO.pow(P.bitLength()));
+		plainText[0]=A;
+		plainText[1]=B;
+		
+		return plainText;
+		
 	}
 }
