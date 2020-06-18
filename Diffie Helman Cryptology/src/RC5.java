@@ -12,8 +12,37 @@ public class RC5
 	 public static void main(String[] args)
 	{
 		 RC5 rc5 = new RC5();
+		 BigInteger[] maarah =new BigInteger[2];
 		 rc5.keyExp();
+		 maarah = rc5.enc(BigInteger.TEN);
+		 System.out.println("");
+		 System.out.println(maarah[0]+","+maarah[1]);
+		 maarah = rc5.enc(maarah);
 	}
+	/* static final int INT_BITS = 32; 
+	  
+	 /*Function to left rotate n by d bits
+	 static BigInteger rotateLeft(BigInteger n, BigInteger d) { 
+	       BigInteger mymod=d.mod(BigInteger.valueOf(n.bitLength()));
+	     
+		 
+	     /* In n<<d, last d bits are 0.  
+	        To put first 3 bits of n at 
+	        last, do bitwise or of n<<d with 
+	        n >>(INT_BITS - d) 
+		 
+	     return (n.shiftLeft(mymod.intValue())).or((n.shiftRight(INT_BITS - mymod.intValue()))); 
+	 } 
+	   
+	 /*Function to right rotate n by d bits
+	 static int rotateRight(int n, int d) { 
+	       
+	     /* In n>>d, first d bits are 0.  
+	        To put last 3 bits of at 
+	        first, do bitwise or of n>>d  
+	        with n <<(INT_BITS - d) 
+	     return (n >> d) | (n << (INT_BITS - d)); 
+	 }*/ 
 		
 	 public static BigInteger rotateLeft(BigInteger numToRotate,int mylen,BigInteger howManyToRotate)
 		{
@@ -133,13 +162,13 @@ public class RC5
 		BigInteger[] encText = new BigInteger[2];
 		BigInteger A, B;
 		A = plainText.shiftRight(P.bitLength());//left 16 bits
-		B = plainText.and(BigInteger.valueOf(65536));//right 16 bits
+		B = plainText.and(BigInteger.valueOf(65535));//right 16 bits
 		A = A.add(S[0]).mod(BigInteger.TWO.pow(P.bitLength()));
 		B = B.add(S[1]).mod(BigInteger.TWO.pow(P.bitLength()));
 		for(int i = 0; i < r;i++)
 		{
-			A = (rotateLeft(A.xor(B), P.bitLength(), B).add(S[2*i])).mod(BigInteger.TWO.pow(P.bitLength()));
-			B = (rotateLeft(B.xor(A), P.bitLength(), A).add(S[2*i+1])).mod(BigInteger.TWO.pow(P.bitLength()));
+			A = (rotateLeft(A.xor(B),P.bitLength(),B).add(S[2*i])).mod(BigInteger.TWO.pow(P.bitLength()));
+			B = (rotateLeft(B.xor(A),P.bitLength(),A).add(S[2*i+1])).mod(BigInteger.TWO.pow(P.bitLength()));
 		}
 		encText[0] = A;
 		encText[1] = B;
@@ -150,7 +179,7 @@ public class RC5
 		BigInteger[] plainText = new BigInteger[2];
 		BigInteger A, B;
 		A = encText.shiftRight(P.bitLength());//left 16 bits
-		B = encText.and(BigInteger.valueOf(65536));//right 16 bit
+		B = encText.and(BigInteger.valueOf(65535));//right 16 bit
 		for(int i = r; i > 0;i--)
 		{
 			B = rotateRight(B.subtract(S[2*i+1]),P.bitLength(), A).xor(A);	
