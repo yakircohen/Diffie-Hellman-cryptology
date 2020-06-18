@@ -45,12 +45,12 @@ public class Person {
 		{
 			
 			int flag = 1;
-			if(pubKey[0].compareTo(BigInteger.ZERO)==0) {
+		/*	if(pubKey[0].compareTo(BigInteger.ZERO)==0) {
 				pubKey[0]=generator[0];
 				pubKey[1]=generator[1];
 				flag=0;
 				
-			}else if(generator[0].compareTo(pubKey[0]) != 0)
+			}else*/ if(generator[0].compareTo(pubKey[0]) != 0)
 			{
 				numerator=generator[1].subtract(pubKey[1]);//y2-y1
 				denom=generator[0].subtract(pubKey[0]);//x2-x1
@@ -68,8 +68,8 @@ public class Person {
 	
 			}
 			else {
-				//pubKey[0]=pubKey[0] ;
-				pubKey[1] = BigInteger.ZERO;
+		//		pubKey[0]=BigInteger.ZERO ;
+		//		pubKey[1] = BigInteger.ZERO;
 				flag = 0;
 			}
 			if(flag == 1)
