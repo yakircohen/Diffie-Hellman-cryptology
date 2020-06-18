@@ -14,10 +14,13 @@ public class RC5
 		 RC5 rc5 = new RC5();
 		 BigInteger[] maarah =new BigInteger[2];
 		 rc5.keyExp();
-		 maarah = rc5.enc(BigInteger.TEN);
+		 BigInteger a;
+		 maarah = rc5.enc(new BigInteger("41341234"));
 		 System.out.println("");
 		 System.out.println(maarah[0]+","+maarah[1]);
-		 maarah = rc5.enc(maarah);
+		 a=maarah[0].multiply(BigInteger.valueOf(65536)).add(maarah[1]);
+		 maarah = rc5.dec(a);
+		 System.out.println(maarah[0]+","+maarah[1]);
 	}
 	/* static final int INT_BITS = 32; 
 	  
@@ -67,14 +70,14 @@ public class RC5
 			temprot=howManyToRotate.mod(rotationlen);//Optimize rotation
 			BigInteger ret=numToRotate;
 			for(BigInteger i = BigInteger.ZERO; i.compareTo(temprot)<0; i = i.add(BigInteger.valueOf(1)))
-			    if (ret.testBit(0)) 
+				if (ret.testBit(0)) 
 			    {
 			    	ret= ret.shiftRight(1);
 			    	ret = ret.setBit(mylen-1);
 			    }
 			    else
 			    	ret= ret.shiftRight(1);
-			       
+			
 			return ret;
 		}
 		    
@@ -89,7 +92,7 @@ public class RC5
 		
 		
 		BigInteger A, B;
-		BigInteger eightBit = BigInteger.valueOf(100000000);
+		BigInteger eightBit = BigInteger.valueOf(256);
 		 
 		BigInteger binarykey;
 		BigInteger two = new BigInteger("2");
@@ -100,7 +103,7 @@ public class RC5
     	System.out.println(key.bitLength());
 		ke=key.toString(2);//change to base 2
 		length = ke.length();// the  key's length in binary
-		binarykey = new BigInteger(ke);//change string to biginteger
+		binarykey = new BigInteger(ke,2);//change string to biginteger
 		
 		
 		//converting secret key from byte to words 
@@ -165,7 +168,7 @@ public class RC5
 		B = plainText.and(BigInteger.valueOf(65535));//right 16 bits
 		A = A.add(S[0]).mod(BigInteger.TWO.pow(P.bitLength()));
 		B = B.add(S[1]).mod(BigInteger.TWO.pow(P.bitLength()));
-		for(int i = 0; i < r;i++)
+		for(int i = 1; i <= r;i++)
 		{
 			A = (rotateLeft(A.xor(B),P.bitLength(),B).add(S[2*i])).mod(BigInteger.TWO.pow(P.bitLength()));
 			B = (rotateLeft(B.xor(A),P.bitLength(),A).add(S[2*i+1])).mod(BigInteger.TWO.pow(P.bitLength()));
@@ -180,10 +183,10 @@ public class RC5
 		BigInteger A, B;
 		A = encText.shiftRight(P.bitLength());//left 16 bits
 		B = encText.and(BigInteger.valueOf(65535));//right 16 bit
-		for(int i = r; i > 0;i--)
+		for(int i = r; i >= 1;i--)
 		{
-			B = rotateRight(B.subtract(S[2*i+1]),P.bitLength(), A).xor(A);	
-			A = rotateRight(A.subtract(S[2*i]),P.bitLength(), B).xor(B);
+			B = rotateRight(B.subtract(S[2*i+1]).mod(BigInteger.TWO.pow(P.bitLength())),P.bitLength(), A).xor(A);	
+			A = rotateRight(A.subtract(S[2*i]).mod(BigInteger.TWO.pow(P.bitLength())),P.bitLength(), B).xor(B);
 			
 		}
 		B=B.subtract(S[1]).mod(BigInteger.TWO.pow(P.bitLength()));
