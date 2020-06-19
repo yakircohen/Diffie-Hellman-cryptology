@@ -32,6 +32,11 @@ public class Person {
 		this.pubKeyY = pubKey[1];
 	}
 	
+	
+	private boolean AreInverse(BigInteger[] point1, BigInteger[] point2)
+    {
+        return  (point1[0]==point2[0] && (point1[1].add(point2[1])).mod(p).equals(BigInteger.ZERO));
+    }
 	public BigInteger[] findPubKey(BigInteger privateKey,BigInteger[] generator)
 	{
 		BigInteger m,numerator = null,denom = null,inverse = null,x3,y3;
@@ -45,12 +50,12 @@ public class Person {
 		{
 			
 			int flag = 1;
-		/*	if(pubKey[0].compareTo(BigInteger.ZERO)==0) {
+			if(pubKey[0]==null) {
 				pubKey[0]=generator[0];
 				pubKey[1]=generator[1];
 				flag=0;
 				
-			}else*/ if(generator[0].compareTo(pubKey[0]) != 0)
+			}else if(generator[0].compareTo(pubKey[0]) != 0)
 			{
 				numerator=generator[1].subtract(pubKey[1]);//y2-y1
 				denom=generator[0].subtract(pubKey[0]);//x2-x1
@@ -70,6 +75,8 @@ public class Person {
 			else {
 		//		pubKey[0]=BigInteger.ZERO ;
 		//		pubKey[1] = BigInteger.ZERO;
+				pubKey[0]=null ;
+				pubKey[1]=generator[1];
 				flag = 0;
 			}
 			if(flag == 1)
