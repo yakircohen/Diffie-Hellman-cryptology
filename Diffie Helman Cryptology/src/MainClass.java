@@ -1,5 +1,5 @@
 import java.math.BigInteger;
-
+import java.util.Scanner;
 
 public class MainClass {
 
@@ -22,11 +22,25 @@ public class MainClass {
 		Person alice = new Person(el.getP(),generator,el.getA(),el.getB());
 		System.out.println("Bob:");
 		Person bob = new Person(el.getP(),generator,el.getA(),el.getB());
-		BigInteger a1=alice.getPubKeyX();
-		BigInteger a2=alice.getPubKeyY();
-		
+		//generate Private shared keys
 		alice.sharedKeyGen(bob.getPubKeyX(),bob.getPubKeyY());
-		bob.sharedKeyGen(a1,a2);
+		bob.sharedKeyGen(alice.getPubKeyX(),alice.getPubKeyY());
+		//Establish RC5
+		alice.GenerateRC5();
+		bob.GenerateRC5();
+		System.out.println("");
+		System.out.println("start:");
+		Scanner s = new Scanner(System.in);
+	    System.out.print("Enter text = ");
+	    String toencmsg =s.nextLine();
+		System.out.println("to enc(alice):"+toencmsg);
+		String encryted=alice.encRC5(toencmsg);
+		System.out.println("to Dec(Bob):"+encryted);
+		String Decr=bob.decRC5(encryted);
+		System.out.println("encrypted (Bob):"+Decr);
+				
+		
+		
 	}
 
 }

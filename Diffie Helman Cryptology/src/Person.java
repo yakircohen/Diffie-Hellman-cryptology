@@ -15,7 +15,7 @@ public class Person {
 	private BigInteger p;
 	private BigInteger b;
 	private BigInteger sharedKey[];
-
+	private RC5 rc5;
 	public Person(BigInteger p,BigInteger[] generator,BigInteger a,BigInteger b){ 
 		this.a = a;
 		this.p = p;
@@ -33,10 +33,6 @@ public class Person {
 	}
 	
 	
-	private boolean AreInverse(BigInteger[] point1, BigInteger[] point2)
-    {
-        return  (point1[0]==point2[0] && (point1[1].add(point2[1])).mod(p).equals(BigInteger.ZERO));
-    }
 	public BigInteger[] findPubKey(BigInteger privateKey,BigInteger[] generator)
 	{
 		BigInteger m,numerator = null,denom = null,inverse = null,x3,y3;
@@ -48,9 +44,10 @@ public class Person {
 		
 		for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
 		{
-			
+
+
 			int flag = 1;
-			if(pubKey[0]==null) {
+			if(pubKey[1]==null) {
 				pubKey[0]=generator[0];
 				pubKey[1]=generator[1];
 				flag=0;
@@ -73,10 +70,7 @@ public class Person {
 	
 			}
 			else {
-		//		pubKey[0]=BigInteger.ZERO ;
-		//		pubKey[1] = BigInteger.ZERO;
-				pubKey[0]=null ;
-				pubKey[1]=generator[1];
+				pubKey[1]=null ;
 				flag = 0;
 			}
 			if(flag == 1)
@@ -96,6 +90,8 @@ public class Person {
 			
 		}
 		
+		
+
 		return pubKey;
 	}
 	
@@ -105,7 +101,9 @@ public class Person {
 		generateKey[0] = x;
 		generateKey[1] = y;
 		sharedKey = findPubKey(this.privateKey, generateKey);
-		System.out.println(sharedKey[0] + "," + sharedKey[1]);
+		//System.out.println(sharedKey[0] + "," + sharedKey[1]);
+		if(sharedKey[0]==null)
+			sharedKey[0]=BigInteger.ZERO;
 	}
 	
 	public BigInteger getPubKeyX() {
@@ -122,6 +120,145 @@ public class Person {
 	}
 
 	
+	
+	public void GenerateRC5() {
+		 rc5 = new RC5();
+		 String sharedK=String.format("%16s%16s", sharedKey[0].toString(2),sharedKey[1].toString(2)).replace(" ", "0");
+		 rc5.keyExp(new BigInteger(sharedK,2));
+	}
+	
+	
+	public String encRC5(String toenc) {
+		String toenc32=transformString32(toenc);
+		System.out.println("PreEnc:"+toenc32);
+		StringBuffer sb=new StringBuffer();
+		BigInteger[] maarah =new BigInteger[2];
+		
+		for(int i=0;i<toenc32.length();i=i+8) {
+
+			String target=toenc32.substring(i,i+8);
+
+			BigInteger toenc4inhex=new BigInteger(target,16);
+			maarah=rc5.enc(toenc4inhex);
+			toenc4inhex=maarah[0].multiply(BigInteger.valueOf(65536)).add(maarah[1]);
+
+			sb.append(String.format("%8s",toenc4inhex.toString(16)).replace(" ", "0"));
+
+			
+		}
+		String res = sb.toString();
+		return res;
+	}
+	
+	public String decRC5(String todec) {
+		
+		StringBuffer sb=new StringBuffer();
+		BigInteger[] maarah =new BigInteger[2];
+		for(int i=0;i<todec.length();i=i+8) {
+			String target=todec.substring(i,i+8);
+
+			BigInteger todec4inhex=new BigInteger(target,16);
+			maarah=rc5.dec(todec4inhex);
+			todec4inhex=maarah[0].multiply(BigInteger.valueOf(65536)).add(maarah[1]);
+
+			sb.append(String.format("%8s",todec4inhex.toString(16)).replace(" ", "0"));
+			
+			
+		}
+		
+		
+		String res = sb.toString();
+		System.out.println("AfterDec Pre resassemble:"+res);
+		res=untransformString32(res);
+		return res;
+	}
+
+	
+	
+	
+	private String transformString32(String totrans) {
+		StringBuffer sb=new StringBuffer();;
+		char ch[] = totrans.toCharArray();
+	    for(int i = 0; i < ch.length; i++) {
+	       String hexString = Integer.toHexString(ch[i]);
+	       sb.append(hexString);
+	    }
+	    String beforesend = sb.toString();
+		
+		String testedTextSend=hexstuffingWithPad(beforesend,32/4);
+		 return testedTextSend;
+	}
+	
+	private String untransformString32(String tountrans) {
+		//reverse
+		String testedTextRec=revethexstuffingWithPad(tountrans);
+	      String result = new String();
+	      char[] charArray = testedTextRec.toCharArray();
+	      for(int i = 0; i < charArray.length; i=i+2) {
+	         String st = ""+charArray[i]+""+charArray[i+1];
+ 
+	         result = result + (char)Integer.parseInt(st, 16);
+	      }	
+	      return result;
+	}
+	
+	
+	public static String hexstuffingWithPad(String tostuff,int moddd) {
+		String ret=new String();
+		
+		tostuff = 'f' + tostuff + 'f'; 
+        for (int i = 0; i < tostuff.length(); i++) { 
+
+            // Stuff with 'E' if 'F' is found in the data to be sent 
+            if (tostuff.charAt(i) == 'f' && i != 0 && i != (tostuff.length() - 1)) 
+            	ret = ret + 'e' + tostuff.charAt(i); 
+
+            // Stuff with 'E' if 'E' is found in the data to be sent 
+            else if (tostuff.charAt(i) == 'e') 
+            	ret = ret + 'e' + tostuff.charAt(i); 
+            else
+            	ret = ret + tostuff.charAt(i); 
+        } 
+        int beforpadlen=ret.length();
+        for(int i=beforpadlen;i<moddd-(beforpadlen%moddd) +beforpadlen;i++) {
+        	ret=ret+'f';
+        }
+
+
+		return ret;
+	}
+	
+	
+	
+	public static String revethexstuffingWithPad(String tounstuff) {
+		String ret=new String();
+		
+
+        for (int i = 1; i < tounstuff.length() - 1; i++) { 
+        	
+        	if(tounstuff.charAt(i)=='f')
+        		break;
+           // If data contains a 'D' or 'F' do not unstuff it 
+            if (tounstuff.charAt(i) != 'f' && tounstuff.charAt(i) != 'e') 
+            	ret = ret + tounstuff.charAt(i); 
+
+            // If data contains 'E' followed by 'E', de-stuff the former 'E' 
+            else if (tounstuff.charAt(i) == 'e' && tounstuff.charAt(i + 1) == 'e') { 
+            	ret = ret + 'e'; 
+                i++; //extra jump
+            }
+            //if it is E followd by F de-stuff  'E' 
+            else if (tounstuff.charAt(i) == 'e' && tounstuff.charAt(i + 1) == 'f') { 
+            	ret = ret + 'f'; 
+                i++; //extra jump
+            }
+          
+              
+        } 
+
+
+		return ret;
+	}
 
 }
                                                         

@@ -3,50 +3,24 @@ import java.math.*;
 public class RC5 
 {
 	
-	private int r=12;
-	private int t=2*(r+1);
-	private BigInteger [] S = new BigInteger[t];
-	private BigInteger P = new BigInteger("47073"); //p(16 bits) = 0xB7E1
-	private BigInteger Q = new BigInteger("40503"); //q(16 bits) = 0x9E37
+	private int r;
+	private int t;
+	private BigInteger [] S;
+	private BigInteger P;
+	private BigInteger Q;
 	
-	 public static void main(String[] args)
+	
+	public RC5 ()
 	{
-		 RC5 rc5 = new RC5();
-		 BigInteger[] maarah =new BigInteger[2];
-		 rc5.keyExp();
-		 BigInteger a;
-		 maarah = rc5.enc(new BigInteger("41341234"));
-		 System.out.println("");
-		 System.out.println(maarah[0]+","+maarah[1]);
-		 a=maarah[0].multiply(BigInteger.valueOf(65536)).add(maarah[1]);
-		 maarah = rc5.dec(a);
-		 System.out.println(maarah[0]+","+maarah[1]);
-	}
-	/* static final int INT_BITS = 32; 
-	  
-	 /*Function to left rotate n by d bits
-	 static BigInteger rotateLeft(BigInteger n, BigInteger d) { 
-	       BigInteger mymod=d.mod(BigInteger.valueOf(n.bitLength()));
-	     
-		 
-	     /* In n<<d, last d bits are 0.  
-	        To put first 3 bits of n at 
-	        last, do bitwise or of n<<d with 
-	        n >>(INT_BITS - d) 
-		 
-	     return (n.shiftLeft(mymod.intValue())).or((n.shiftRight(INT_BITS - mymod.intValue()))); 
-	 } 
-	   
-	 /*Function to right rotate n by d bits
-	 static int rotateRight(int n, int d) { 
-	       
-	     /* In n>>d, first d bits are 0.  
-	        To put last 3 bits of at 
-	        first, do bitwise or of n>>d  
-	        with n <<(INT_BITS - d) 
-	     return (n >> d) | (n << (INT_BITS - d)); 
-	 }*/ 
 		
+		this.P = new BigInteger("47073"); //p(16 bits) = 0xB7E1
+		this.Q = new BigInteger("40503"); //q(16 bits) = 0x9E37
+		this.r = 12;
+		this.t = 2*(r+1);
+		this.S = new BigInteger[t];
+	}
+	
+	 
 	 public static BigInteger rotateLeft(BigInteger numToRotate,int mylen,BigInteger howManyToRotate)
 		{
 		//	System.out.println("temp= "+temp.toString()+", mylen="+mylen+", myrot="+myrot.toString());
@@ -82,7 +56,7 @@ public class RC5
 		}
 		    
 		
-	public void keyExp()
+	public void keyExp(BigInteger key)
 	{
 		String ke;
 		int length;
@@ -96,11 +70,11 @@ public class RC5
 		 
 		BigInteger binarykey;
 		BigInteger two = new BigInteger("2");
-    	BigInteger key = two.pow(55);
-    	   	
+    	//BigInteger key = two.pow(32);
+
     	
     	
-    	System.out.println(key.bitLength());
+    	
 		ke=key.toString(2);//change to base 2
 		length = ke.length();// the  key's length in binary
 		binarykey = new BigInteger(ke,2);//change string to biginteger
@@ -111,14 +85,14 @@ public class RC5
 		int c = (int) Math.ceil((length/8.0)/u); // c=b/u (b is the size of the key in bytes)
 		
 		
-		BigInteger [] K = new BigInteger[(int) Math.ceil(length/8)];
+		BigInteger [] K = new BigInteger[(int) Math.ceil(length/8.0)];
 		BigInteger [] L = new BigInteger[c];///////
 		
 		for(i=0;i<c;i++)
 			L[i]=BigInteger.ZERO;
 		i=0;
 		
-		System.out.println("Number = " +binarykey);
+		//System.out.println("Number = " +binarykey);
 		
 		while (!binarykey.equals(BigInteger.ZERO))
 		{
@@ -156,6 +130,7 @@ public class RC5
 		System.out.print("\ns= ");
 		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(t))<0; m = m.add(BigInteger.valueOf(1)))
 			System.out.print(S[m.intValue()].toString(16)+" ");
+		System.out.println("");
 	//	System.out.println(A);
 		//System.out.println(B);
 	}
