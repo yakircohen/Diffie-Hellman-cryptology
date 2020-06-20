@@ -42,57 +42,83 @@ public class Person {
 		pubKey[1]=generator[1];//y1
 		//System.out.println("privateKey: "+privateKey);
 		
-		for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
+		/*for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
 		{
 
 
-			int flag = 1;
-			if(pubKey[1]==null) {
-				pubKey[0]=generator[0];
-				pubKey[1]=generator[1];
-				flag=0;
-				
-			}else if(generator[0].compareTo(pubKey[0]) != 0)
-			{
-				numerator=generator[1].subtract(pubKey[1]);//y2-y1
-				denom=generator[0].subtract(pubKey[0]);//x2-x1
-				numerator=numerator.mod(p);
-				denom=denom.mod(p);
-	
-			}
+			pubKey=pointAddition( generator, pubKey);
 			
-			else if(generator[0].compareTo(pubKey[0]) == 0 && generator[1].compareTo(pubKey[1]) == 0)
-			{
-				//m = (3*x1^2+a)/2*y1
-				m=(pubKey[0].pow(2)).multiply(BigInteger.valueOf(3)).mod(p);// m=3*x1^2
-				numerator= m.add(a).mod(p);//m=3*x1^2+a
-				denom=pubKey[1].multiply(BigInteger.valueOf(2)).mod(p);//2*y1
-	
-			}
-			else {
-				pubKey[1]=null ;
-				flag = 0;
-			}
-			if(flag == 1)
-			{
-				inverse=denom.modInverse(p);
-				m=numerator.multiply(inverse);
-				x3=m.pow(2);//m^2
-				x3=(x3.subtract(pubKey[0])).subtract(generator[0]);//x3 = m^2 - x1 - x2 
-				x3 =x3.mod(p);//x3 = x3 mod(p)
-				y3 = pubKey[0].subtract(x3);//y3 = x1-x3
-				y3= m.multiply(y3);//y3 = m*(x1-x3)
-				y3 = y3.subtract(pubKey[1]);
-				y3 = y3.mod(p);//y3 = (m*(x1-x3)-y1)mod p
-				pubKey[0]=x3;//x3
-				pubKey[1]=y3;//y3
-			}
-			
-		}
+		}*/
 		
-		
+		pubKey=pointMul(generator,privateKey);
 
 		return pubKey;
+	}
+	
+	private BigInteger[] pointMul(BigInteger[] p1,BigInteger timetomul) {
+		BigInteger[]  res=new BigInteger[2];
+		BigInteger[]  splittotwo=new BigInteger[2];
+		BigInteger[]  splittotwoAdded=new BigInteger[2];
+		res[0] =p1[0];
+		res[1] =p1[1];
+		if(timetomul.compareTo(BigInteger.ZERO)==0) {
+			res[1]=null;
+			return res;
+		}
+		if(timetomul.compareTo(BigInteger.ONE)==0) {
+			return p1;
+		}
+		splittotwo=pointMul(p1,timetomul.divide(BigInteger.TWO));
+		splittotwoAdded=pointAddition(splittotwo,splittotwo);
+		if(timetomul.mod(BigInteger.TWO).compareTo(BigInteger.ONE)==0) {
+			res=pointAddition(splittotwoAdded,p1);
+		}
+		return res;
+	}
+	
+	
+	private BigInteger[] pointAddition(BigInteger[] p1,BigInteger[] p2) {
+		BigInteger[] res=new BigInteger[2];
+		res[0] =p1[0];
+		res[1] =p1[1];
+		BigInteger m,numerator = null,denom = null,inverse = null,x3,y3;
+				
+		if(p1[1]==null)
+			return p2;
+		if(p2[1]==null)
+			return p1;
+		if((p1[0].compareTo(p2[0])==0 ) && p1[1].compareTo(p2[1]) != 0)//reverse?
+		{
+			res[1]=null;
+			return res;
+		}
+		
+		if((p1[0].compareTo(p2[0])!=0 )) {//x1 != x2
+			numerator=p1[1].subtract(p2[1]);//y2-y1
+			denom=p1[0].subtract(p2[0]);//x2-x1
+			numerator=numerator.mod(p);
+			denom=denom.mod(p);
+		}
+		else {
+			//m = (3*x1^2+a)/2*y1
+			m=(p2[0].pow(2)).multiply(BigInteger.valueOf(3)).mod(p);// m=3*x1^2
+			numerator= m.add(a).mod(p);//m=3*x1^2+a
+			denom=p2[1].multiply(BigInteger.valueOf(2)).mod(p);//2*y1
+
+		}
+		inverse=denom.modInverse(p);
+		m=numerator.multiply(inverse);
+		x3=m.pow(2);//m^2
+		x3=(x3.subtract(p2[0])).subtract(p1[0]);//x3 = m^2 - x1 - x2 
+		x3 =x3.mod(p);//x3 = x3 mod(p)
+		y3 = p2[0].subtract(x3);//y3 = x1-x3
+		y3= m.multiply(y3);//y3 = m*(x1-x3)
+		y3 = y3.subtract(p2[1]);
+		y3 = y3.mod(p);//y3 = (m*(x1-x3)-y1)mod p
+		res[0]=x3;//x3
+		res[1]=y3;//y3
+		
+		return res;
 	}
 	
 	public  void sharedKeyGen(BigInteger x, BigInteger y)
