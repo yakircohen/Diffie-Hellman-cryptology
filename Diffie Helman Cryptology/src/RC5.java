@@ -63,36 +63,26 @@ public class RC5
 		int i=0;
 		int j=0;
 		
-		
-		
 		BigInteger A, B;
 		BigInteger eightBit = BigInteger.valueOf(256);
-		 
 		BigInteger binarykey;
 		BigInteger two = new BigInteger("2");
-    	//BigInteger key = two.pow(32);
-
-    	
-    	
-    	
+		
 		ke=key.toString(2);//change to base 2
 		length = ke.length();// the  key's length in binary
 		binarykey = new BigInteger(ke,2);//change string to biginteger
-		
 		
 		//converting secret key from byte to words 
 		int u = P.bitLength()/8;//u = w/8 (w is the bits we chose for P and Q - 16 in our case)
 		int c = (int) Math.ceil((length/8.0)/u); // c=b/u (b is the size of the key in bytes)
 		
-		
 		BigInteger [] K = new BigInteger[(int) Math.ceil(length/8.0)];
-		BigInteger [] L = new BigInteger[c];///////
+		BigInteger [] L = new BigInteger[c];
 		
 		for(i=0;i<c;i++)
 			L[i]=BigInteger.ZERO;
 		i=0;
 		
-		//System.out.println("Number = " +binarykey);
 		
 		while (!binarykey.equals(BigInteger.ZERO))
 		{
@@ -101,12 +91,18 @@ public class RC5
 		   i++;
 		}
 		
+		
+		
 		for(i=(int)Math.ceil(length/8.0)-1;i>0;i--)//array starts from 0
 			L[i/u] = (L[i/u].shiftLeft(8)).add(K[i]).mod(BigInteger.valueOf(2).pow(P.bitLength()));//addition in relation to mod 2^w
+		
+		
 		
 		S[0]=P;
 		for(i=1;i<t;i++)
 			S[i]=S[i-1].add(Q).mod(BigInteger.valueOf(2).pow(P.bitLength()));//addition in relation to mod 2^w
+		
+		
 		
 		i=j=0;
 		A = B = BigInteger.ZERO;
@@ -121,6 +117,9 @@ public class RC5
 			j = (j + 1) % c;	
 		}
 		
+		
+		
+		
 		System.out.print("k= ");
 		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(length/8))<0; m = m.add(BigInteger.valueOf(1)))
 			System.out.print(K[m.intValue()].toString(16)+" ");
@@ -131,9 +130,9 @@ public class RC5
 		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(t))<0; m = m.add(BigInteger.valueOf(1)))
 			System.out.print(S[m.intValue()].toString(16)+" ");
 		System.out.println("");
-	//	System.out.println(A);
-		//System.out.println(B);
 	}
+	
+	
 	
 	public BigInteger[] enc(BigInteger plainText)
 	{
@@ -152,6 +151,8 @@ public class RC5
 		encText[1] = B;
 		return encText;
 	}
+	
+	
 	public BigInteger[] dec(BigInteger encText)
 	{
 		BigInteger[] plainText = new BigInteger[2];

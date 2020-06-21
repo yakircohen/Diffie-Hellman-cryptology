@@ -13,13 +13,15 @@ public class Person {
 	private BigInteger pubKeyY;
 	private BigInteger a;
 	private BigInteger p;
-	private BigInteger b;
 	private BigInteger sharedKey[];
 	private RC5 rc5;
-	public Person(BigInteger p,BigInteger[] generator,BigInteger a,BigInteger b){ 
+	
+	
+	
+	public Person(BigInteger p,BigInteger[] generator,BigInteger a)
+	{ 
 		this.a = a;
 		this.p = p;
-		this.b = b;
 		Random randPrivKey = new Random();
 		do {
 			this.privateKey= new BigInteger(p.bitLength(), randPrivKey); 
@@ -33,29 +35,7 @@ public class Person {
 	}
 	
 	
-	public BigInteger[] findPubKey(BigInteger privateKey,BigInteger[] generator)
-	{
-		BigInteger m,numerator = null,denom = null,inverse = null,x3,y3;
-		
-		BigInteger[] pubKey = new BigInteger[2];
-		pubKey[0]=generator[0];//x1
-		pubKey[1]=generator[1];//y1
-		//System.out.println("privateKey: "+privateKey);
-		
-		/*for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
-		{
-
-
-			pubKey=pointAddition( generator, pubKey);
-			
-		}*/
-		
-		pubKey=pointMul(generator,privateKey);
-
-		return pubKey;
-	}
-	
-	private BigInteger[] pointMul(BigInteger[] p1,BigInteger timetomul) {
+	private BigInteger[] findPubKey(BigInteger timetomul,BigInteger[] p1) {
 		BigInteger[]  res=new BigInteger[2];
 		BigInteger[]  splittotwo=new BigInteger[2];
 		BigInteger[]  splittotwoAdded=new BigInteger[2];
@@ -68,7 +48,7 @@ public class Person {
 		if(timetomul.compareTo(BigInteger.ONE)==0) {
 			return p1;
 		}
-		splittotwo=pointMul(p1,timetomul.divide(BigInteger.TWO));
+		splittotwo=findPubKey(timetomul.divide(BigInteger.TWO),p1);
 		splittotwoAdded=pointAddition(splittotwo,splittotwo);
 		if(timetomul.mod(BigInteger.TWO).compareTo(BigInteger.ONE)==0) {
 			res=pointAddition(splittotwoAdded,p1);
@@ -121,6 +101,8 @@ public class Person {
 		return res;
 	}
 	
+	
+	
 	public  void sharedKeyGen(BigInteger x, BigInteger y)
 	{
 		BigInteger[] generateKey = new BigInteger[2];
@@ -131,6 +113,8 @@ public class Person {
 		if(sharedKey[0]==null)
 			sharedKey[0]=BigInteger.ZERO;
 	}
+	
+	
 	
 	public BigInteger getPubKeyX() {
 		return pubKeyX;

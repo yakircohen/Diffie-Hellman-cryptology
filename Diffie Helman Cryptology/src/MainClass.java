@@ -19,9 +19,9 @@ public class MainClass {
 		
 		//Alice and Bob each generate their own Public key and Private key 
 		System.out.println("Alice:");
-		Person alice = new Person(el.getP(),generator,el.getA(),el.getB());
+		Person alice = new Person(el.getP(),generator,el.getA());
 		System.out.println("Bob:");
-		Person bob = new Person(el.getP(),generator,el.getA(),el.getB());
+		Person bob = new Person(el.getP(),generator,el.getA());
 		//generate Private shared keys
 		alice.sharedKeyGen(bob.getPubKeyX(),bob.getPubKeyY());
 		bob.sharedKeyGen(alice.getPubKeyX(),alice.getPubKeyY());
