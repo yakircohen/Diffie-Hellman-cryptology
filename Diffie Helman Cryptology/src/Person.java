@@ -1,5 +1,4 @@
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Random;
 
 
@@ -9,13 +8,12 @@ public class Person {
 	private BigInteger pubKeyY;
 	private BigInteger a;
 	private BigInteger p;
-	private BigInteger b;
 	private BigInteger sharedKey[];
 	private RC5 rc5;
-	public Person(BigInteger p,BigInteger[] generator,BigInteger a,BigInteger b){ 
+	public Person(BigInteger p,BigInteger[] generator,BigInteger a){ 
 		this.a = a;
 		this.p = p;
-		this.b = b;
+		
 		Random randPrivKey = new Random();
 		do {
 			this.privateKey= new BigInteger(p.bitLength(), randPrivKey); 
@@ -36,7 +34,7 @@ public class Person {
 		BigInteger[] pubKey = new BigInteger[2];
 		pubKey[0]=generator[0];//x1
 		pubKey[1]=generator[1];//y1
-		//System.out.println("privateKey: "+privateKey);
+		
 		
 		for(BigInteger i = BigInteger.ONE; i.compareTo(privateKey) < 0; i = i.add(BigInteger.valueOf(1)))
 		{
@@ -90,17 +88,17 @@ public class Person {
 
 		return pubKey;
 	}
-	
+	//Calculate the common key between them.
 	public  void sharedKeyGen(BigInteger x, BigInteger y)
 	{
 		BigInteger[] generateKey = new BigInteger[2];
 		generateKey[0] = x;
 		generateKey[1] = y;
 		sharedKey = findPubKey(this.privateKey, generateKey);
-		//System.out.println(sharedKey[0] + "," + sharedKey[1]);
 		if(sharedKey[0]==null)
 			sharedKey[0]=BigInteger.ZERO;
 	}
+	
 	
 	public BigInteger getPubKeyX() {
 		return pubKeyX;
@@ -116,36 +114,34 @@ public class Person {
 	}
 
 	
-	
+	//genarate RC5 object.
 	public void GenerateRC5() {
 		 rc5 = new RC5();
 		 String sharedK=String.format("%16s%16s", sharedKey[0].toString(2),sharedKey[1].toString(2)).replace(" ", "0");
 		 rc5.keyExp(new BigInteger(sharedK,2));
 	}
 	
-	
+	//encrypt the plain text with the RC5.
 	public String encRC5(String toenc) {
 		String toenc32=transformString32(toenc);
 		System.out.println("PreEnc:"+toenc32);
 		StringBuffer sb=new StringBuffer();
 		BigInteger[] maarah =new BigInteger[2];
 		
-		for(int i=0;i<toenc32.length();i=i+8) {
+		for(int i=0;i<toenc32.length();i=i+8)
+		{
 
 			String target=toenc32.substring(i,i+8);
-
 			BigInteger toenc4inhex=new BigInteger(target,16);
 			maarah=rc5.enc(toenc4inhex);
 			toenc4inhex=maarah[0].multiply(BigInteger.valueOf(65536)).add(maarah[1]);
-
 			sb.append(String.format("%8s",toenc4inhex.toString(16)).replace(" ", "0"));
-
 			
 		}
 		String res = sb.toString();
 		return res;
 	}
-	
+	//decrypting the plain text with the RC5.
 	public String decRC5(String todec) {
 		
 		StringBuffer sb=new StringBuffer();
@@ -162,25 +158,23 @@ public class Person {
 			
 		}
 		
-		
 		String res = sb.toString();
 		System.out.println("AfterDec Pre resassemble:"+res);
 		res=untransformString32(res);
 		return res;
 	}
 
-	
-	
-	
+	//convert string to 32 bit sectors.
 	private String transformString32(String totrans) {
 		StringBuffer sb=new StringBuffer();;
 		char ch[] = totrans.toCharArray();
-	    for(int i = 0; i < ch.length; i++) {
+	    for(int i = 0; i < ch.length; i++)
+	    {
 	       String hexString = Integer.toHexString(ch[i]);
 	       sb.append(hexString);
 	    }
+	    
 	    String beforesend = sb.toString();
-		
 		String testedTextSend=hexstuffingWithPad(beforesend,32/4);
 		 return testedTextSend;
 	}
@@ -198,7 +192,7 @@ public class Person {
 	      return result;
 	}
 	
-	
+	//adding also padding under mod.
 	public static String hexstuffingWithPad(String tostuff,int moddd) {
 		String ret=new String();
 		
@@ -225,7 +219,7 @@ public class Person {
 	}
 	
 	
-	
+	//Revesing the  byte stuffing.
 	public static String revethexstuffingWithPad(String tounstuff) {
 		String ret=new String();
 		

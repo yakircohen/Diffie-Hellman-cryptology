@@ -1,5 +1,4 @@
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Random;
 
 
@@ -16,7 +15,7 @@ public class EllipticCurve {
        
     public void initCurve()
     {
-      
+        //Produces the Elliptic Curve's formula in random.
     	Random randGen = new Random();
     	BigInteger two = new BigInteger("2");
     	BigInteger min = two.pow(19);
@@ -29,7 +28,7 @@ public class EllipticCurve {
         		p = randNum.add(min);
         	if(randNum.compareTo(subtraction) >= 0)
         		p = randNum.mod(subtraction).add(min);
-      //  	p=p.shiftRight(2).shiftLeft(2).add(BigInteger.TWO).add(BigInteger.ONE);
+     
 
     	}while(p.isProbablePrime(1) == false);
 
@@ -42,7 +41,7 @@ public class EllipticCurve {
         	
     	}while(checkSingularity.mod(p) == BigInteger.ZERO );
     }
-    	
+    	//Finds the generator point in Elliptic Curve
     public BigInteger[] findGenerator(BigInteger a,BigInteger b, BigInteger p)
     {
     	BigInteger coordinateY, tempXPow,tempA,afterMod;

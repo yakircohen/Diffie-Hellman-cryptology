@@ -20,10 +20,9 @@ public class RC5
 		this.S = new BigInteger[t];
 	}
 	
-	 
+	 //The function makes a left shift in a circular fashion.
 	 public static BigInteger rotateLeft(BigInteger numToRotate,int mylen,BigInteger howManyToRotate)
 		{
-		//	System.out.println("temp= "+temp.toString()+", mylen="+mylen+", myrot="+myrot.toString());
 			BigInteger temprot;
 			BigInteger rotationlen=new BigInteger(Integer.toString(mylen));
 			temprot=howManyToRotate.mod(rotationlen);//Optimize rotation
@@ -31,14 +30,14 @@ public class RC5
 			for(BigInteger i = BigInteger.ZERO; i.compareTo(temprot)<0; i = i.add(BigInteger.valueOf(1))){
 				ret= ret.shiftLeft(1);
 			    if (ret.testBit(mylen)) {//do we need to put 1 on beginning?
-			        ret = ret.clearBit(mylen).setBit(0);// so del left 1 on end and put 1 on start
+			        ret = ret.clearBit(mylen).setBit(0);// so delete left 1 on end and put 1 on start
 			    }
 			}
 		    return ret;
 		}
+	 //The function makes a right shift in a circular fashion.
 	 public static BigInteger rotateRight(BigInteger numToRotate,int mylen,BigInteger howManyToRotate)
 		{
-		//	System.out.println("temp= "+temp.toString()+", mylen="+mylen+", myrot="+myrot.toString());
 			BigInteger temprot;
 			BigInteger rotationlen=new BigInteger(Integer.toString(mylen));
 			temprot=howManyToRotate.mod(rotationlen);//Optimize rotation
@@ -55,7 +54,7 @@ public class RC5
 			return ret;
 		}
 		    
-		
+		//Expanding the key according to rc5 algorithm.
 	public void keyExp(BigInteger key)
 	{
 		String ke;
@@ -67,10 +66,9 @@ public class RC5
 		
 		BigInteger A, B;
 		BigInteger eightBit = BigInteger.valueOf(256);
-		 
 		BigInteger binarykey;
 		BigInteger two = new BigInteger("2");
-    	//BigInteger key = two.pow(32);
+    	
 
 		ke=key.toString(2);//change to base 2
 		length = ke.length();// the  key's length in binary
@@ -82,14 +80,14 @@ public class RC5
 		
 		
 		BigInteger [] K = new BigInteger[(int) Math.ceil(length/8.0)];
-		BigInteger [] L = new BigInteger[c];///////
+		BigInteger [] L = new BigInteger[c];
 		
 		for(i=0;i<c;i++)
 			L[i]=BigInteger.ZERO;
 		i=0;
 		
-		//System.out.println("Number = " +binarykey);
 		
+		//Divide the key the size of a byte in each cell in array k.
 		while (!binarykey.equals(BigInteger.ZERO))
 		{
 		   K[i]=binarykey.mod(eightBit);
@@ -104,6 +102,8 @@ public class RC5
 		for(i=1;i<t;i++)
 			S[i]=S[i-1].add(Q).mod(BigInteger.valueOf(2).pow(P.bitLength()));//addition in relation to mod 2^w
 		
+		
+		//Initializes the array s and l.
 		i=j=0;
 		A = B = BigInteger.ZERO;
 		BigInteger three=new BigInteger("3");	
@@ -127,10 +127,9 @@ public class RC5
 		for(BigInteger m = BigInteger.ZERO; m.compareTo(BigInteger.valueOf(t))<0; m = m.add(BigInteger.valueOf(1)))
 			System.out.print(S[m.intValue()].toString(16)+" ");
 		System.out.println("");
-	//	System.out.println(A);
-		//System.out.println(B);
 	}
 	
+	// function that encrypts by rc5 algorithm.
 	public BigInteger[] enc(BigInteger plainText)
 	{
 		BigInteger[] encText = new BigInteger[2];
@@ -148,6 +147,8 @@ public class RC5
 		encText[1] = B;
 		return encText;
 	}
+	
+	// function that decrypt by rc5 algorithm.
 	public BigInteger[] dec(BigInteger encText)
 	{
 		BigInteger[] plainText = new BigInteger[2];
